@@ -1,59 +1,154 @@
 package kr.co.lion.android01.myproject_fragment
 
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kr.co.lion.android01.myproject_fragment.databinding.FragmentModifyBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ModifyFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ModifyFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    lateinit var fragmentModifyBinding: FragmentModifyBinding
+    lateinit var mainActivity: MainActivity
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        // Inflate the layout for this fragment
+        fragmentModifyBinding = FragmentModifyBinding.inflate(layoutInflater)
+        mainActivity = activity as MainActivity
+        setToolBar()
+        setView()
+        checkOK()
+        return fragmentModifyBinding.root
+    }
+    //툴바 설정
+    fun setToolBar(){
+        fragmentModifyBinding.apply {
+            materialModifyToolbar.apply {
+                //타이틀 설정
+                title = "학생 정보 수정"
+                //아이콘 설정
+                setNavigationIcon(R.drawable.arrow_back_24px)
+                //아이콘을 클릭했을 때
+                setNavigationOnClickListener {
+                    mainActivity.removeFragment(FragmentName.MODIFY_FRAGMENT)
+                }
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_modify, container, false)
+    //뷰 설정
+    fun setView(){
+        fragmentModifyBinding.apply {
+            var studentInfo = arguments?.getInt("info1", 0)
+            if (studentInfo != null){
+                var info1 = Info.infoList[studentInfo]
+
+                nameModifyText.setText("${info1.name}")
+                ageModifyText.setText("${info1.age}")
+                korModifyText.setText("${info1.kor}")
+                engModifyText.setText("${info1.eng}")
+                mathModifyText.setText("${info1.math}")
+            }
+        }
+    }
+    //변경사항
+    fun modifyInfo(){
+        fragmentModifyBinding.apply {
+            var studentInfo = arguments?.getInt("info1", 0)
+            if (studentInfo != null) {
+                var info1 = Info.infoList[studentInfo]
+                info1.name = nameModifyText.text.toString()
+                info1.age = ageModifyText.text.toString().toInt()
+                info1.kor = korModifyText.text.toString().toInt()
+                info1.eng = engModifyText.text.toString().toInt()
+                info1.math = mathModifyText.text.toString().toInt()
+
+
+
+            }
+        }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ModifyFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ModifyFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    //유효성 검사
+    fun checkOK(){
+        fragmentModifyBinding.apply {
+            resultModifyButton.setOnClickListener {
+                var name = nameModifyText.text.toString()
+                var age = ageModifyText.text.toString()
+                var kor = korModifyText.text.toString()
+                var eng = engModifyText.text.toString()
+                var math = mathModifyText.text.toString()
+
+                if (name.trim().isEmpty()){
+                    Info.showDiaLog(mainActivity, "이름 입력 오류", "이름을 입력해주세요"){ dialogInterface: DialogInterface, i: Int ->
+                        Info.showSoftInput(nameModifyText, mainActivity)
+                    }
+                    return@setOnClickListener
+
                 }
+                if (age.trim().isEmpty()){
+                    Info.showDiaLog(mainActivity, "나이 입력 오류", "나이를 입력해주세요"){ dialogInterface: DialogInterface, i: Int ->
+                        Info.showSoftInput(ageModifyText, mainActivity)
+                    }
+                    return@setOnClickListener
+
+                }
+                if (kor.trim().isEmpty()){
+                    Info.showDiaLog(mainActivity, "국어 점수 입력 오류", "국어 점수를 입력해주세요"){ dialogInterface: DialogInterface, i: Int ->
+                        Info.showSoftInput(korModifyText, mainActivity)
+                    }
+                    return@setOnClickListener
+
+                }
+                if (eng.trim().isEmpty()){
+                    Info.showDiaLog(mainActivity, "영어 점수 입력 오류", "영어 점수를 입력해주세요"){ dialogInterface: DialogInterface, i: Int ->
+                        Info.showSoftInput(engModifyText, mainActivity)
+                    }
+                    return@setOnClickListener
+
+                }
+                if (math.trim().isEmpty()){
+                    Info.showDiaLog(mainActivity, "수학 점수 입력 오류", "수학 점수를 입력해주세요"){ dialogInterface: DialogInterface, i: Int ->
+                        Info.showSoftInput(mathModifyText, mainActivity)
+                    }
+                    return@setOnClickListener
+
+                }
+                modifyInfo()
+                mainActivity.removeFragment(FragmentName.MODIFY_FRAGMENT)
             }
+        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

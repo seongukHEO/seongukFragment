@@ -95,8 +95,12 @@ class MainFragment : Fragment() {
             //클릭했을 때
             holder.mainRowBinding.root.setOnClickListener {
                 var bundle = Bundle()
-                bundle.putString("name", info1.name)
+                bundle.putInt("position", position)
                 mainActivity.replaceFragment(FragmentName.INFO_FRAGMENT, true,true, bundle)
+                onResume().apply {
+                    //와 도저히 모르겠다ㅠㅠ
+                    fragmentMainBinding.recyclerview.adapter?.notifyDataSetChanged()
+                }
             }
         }
     }
